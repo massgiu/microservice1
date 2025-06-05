@@ -57,7 +57,7 @@ def home():
             except Exception as e:
                 db.session.rollback() # Annulla l'operazione in caso di errore
                 error = f"Errore durante il salvataggio del messaggio: {e}"
-                
+
     # Quando carichiamo la pagina per la prima volta (metodo GET o POST),
     # recuperiamo tutti i messaggi dal database e li memorizzamo nella lista all_messages
     all_messages = db.session.execute(db.select(Message).order_by(Message.created_at.desc())).scalars().all()
