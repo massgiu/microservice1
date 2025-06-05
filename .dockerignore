@@ -1,0 +1,22 @@
+# Ignora le cartelle di cache di Python
+__pycache__/
+*.pyc
+
+# Ignora le cartelle degli ambienti virtuali
+venv/
+.conda/ # Se usi Conda, potresti voler escludere anche le cartelle di ambiente Conda
+env/
+
+# Ignora le cartelle specifiche di VS Code
+.vscode/
+
+# Ignora le cartelle di Git
+.git/
+
+# Ignora i file .env (usati per variabili d'ambiente locali)
+.env
+
+# Qualsiasi altro file temporaneo o log che non deve finire nell'immagine
+*.log
+.DS_Store # macOS specific
+npm-debug.log
