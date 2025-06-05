@@ -20,3 +20,4 @@ env/
 *.log
 .DS_Store # macOS specific
 npm-debug.log
+create_db.py
