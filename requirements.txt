@@ -1,22 +1,22 @@
-blinker @ file:///C:/b/abs_b1i87khtob/croot/blinker_1737448732095/work
-click @ file:///C:/b/abs_42rbjngfys/croot/click_1744271606983/work
-colorama @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/colorama_1729036581634/work
-Flask @ file:///C:/b/abs_a6m37uz578/croot/flask_1737454335662/work
-Flask-Cors @ file:///tmp/build/80754af9/flask-cors_1609957731919/work
-Flask-Login @ file:///home/conda/feedstock_root/build_artifacts/flask-login_1733924427350/work
-Flask-SQLAlchemy @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_flask-sqlalchemy_1733868589/work
-greenlet @ file:///C:/b/abs_bbl_18a2tm/croot/greenlet_1733860081977/work
-iniconfig @ file:///home/linux1/recipes/ci/iniconfig_1610983019677/work
-itsdangerous @ file:///C:/Users/dev-admin/buildout/croot/itsdangerous_1732929022589/work
-Jinja2 @ file:///C:/b/abs_920kup4e6u/croot/jinja2_1741711580669/work
-MarkupSafe @ file:///C:/b/abs_a0ma7ge0jc/croot/markupsafe_1738584052792/work
-packaging @ file:///C:/b/abs_3by6s2fa66/croot/packaging_1734472138782/work
-pluggy @ file:///C:/b/abs_dfec_m79vo/croot/pluggy_1733170145382/work
-pytest @ file:///C:/b/abs_9dllqyhfs_/croot/pytest_1738938859288/work
-pytest-flask @ file:///home/conda/feedstock_root/build_artifacts/pytest-flask_1735825397997/work
+blinker
+click
+colorama
+Flask
+Flask-Cors
+Flask-Login
+Flask-SQLAlchemy
+greenlet
+iniconfig
+itsdangerous
+Jinja2
+MarkupSafe
+packaging
+pluggy
+pytest
+pytest-flask
 setuptools==78.1.1
-six @ file:///C:/b/abs_149wuyuo1o/croot/six_1744271521515/work
-SQLAlchemy @ file:///C:/b/abs_275ybuj8n_/croot/sqlalchemy_1745854539419/work
-typing_extensions @ file:///C:/b/abs_0ffjxtihug/croot/typing_extensions_1734714875646/work
-Werkzeug @ file:///C:/b/abs_c7bupijx2_/croot/werkzeug_1737448709012/work
+six
+SQLAlchemy
+typing_extensions
+Werkzeug
 wheel==0.45.1
