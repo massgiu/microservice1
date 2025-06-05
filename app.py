@@ -28,6 +28,41 @@ class Message(db.Model):
     # Metodo per una rappresentazione leggibile dell'oggetto Message
     def __repr__(self):
         return f"<Message {self.id}: {self.name}>"
+    
+# Route per la pagina principale con il form e la lista dei messaggi
+@app.route('/', methods=['GET','POST'])
+def home():
+    error = None
+    success = None
+
+    if request.method == 'POST':
+        # Recupera i dati dal form
+        name = request.form['name']
+        message_content = request.form['message_content']
+
+        # Validazione base dei dati
+        if not name or not message_content:
+            error = "Nome e messaggio non possono essere vuoti!"
+        else:
+            try:
+                # Crea una nuova istanza del modello Message
+                new_message = Message(name=name, message_content=message_content)
+
+                # Aggiungi il nuovo messaggio alla sessione del database
+                with app.app_context(): # Necessario per operazioni DB fuori contesto richiesta
+                    db.session.add(new_message)
+                    # Esegui il commit per salvare i dati nel database
+                    db.session.commit()
+                success = "Messaggio inviato con successo!"
+            except Exception as e:
+                db.session.rollback() # Annulla l'operazione in caso di errore
+                error = f"Errore durante il salvataggio del messaggio: {e}"
+                
+    # Quando carichiamo la pagina per la prima volta (metodo GET o POST),
+    # recuperiamo tutti i messaggi dal database e li memorizzamo nella lista all_messages
+    all_messages = db.session.execute(db.select(Message).order_by(Message.created_at.desc())).scalars().all()
+    # Passiamo i messaggi al template
+    return render_template('index.html', messages=all_messages, error=error, success=success)
 
 # Endpoint di "health check"
 # Un endpoint di health check serve per verificare che il servizio sia attivo e funzionante.
