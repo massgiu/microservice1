@@ -24,4 +24,4 @@ def greet_user():
 if __name__ == '__main__':
     # Avviamo il server Flask in modalità debug (utile per lo sviluppo, ricarica automaticamente le modifiche)
     # Il server sarà in ascolto su http://127.0.0.1:5000
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
