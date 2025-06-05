@@ -1,1 +1,3 @@
 create_db.py
+.dockerignore
+/instance/
