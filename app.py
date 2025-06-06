@@ -86,7 +86,7 @@ def get_all_messages():
     # Restituisce la lista di dizionari come risposta JSON
     return jsonify(messages_list)
 
-# Ottieni un singolo messaggio per ID
+# Ottieni un singolo messaggio dal suo ID
 @app.route('/api/messages/<int:message_id>', methods=['GET'])
 def get_message(message_id):
     with app.app_context():
@@ -109,6 +109,50 @@ def get_message(message_id):
 
         # Restituisce il dizionario come risposta JSON
         return jsonify(message_data)
+
+# Aggiorna un messaggio attraverso ID
+@app.route('/api/messages/<int:message_id>', methods=['PUT'])
+def update_message(message_id):
+    # Cerca il messaggio per ID
+    message = db.session.execute(db.select(Message).filter_by(id=message_id)).scalar_one_or_none()
+
+    if message is None:
+        # Se il messaggio non è stato trovato, restituisce una risposta 404 Not Found
+        return jsonify({'error': 'Message not found'}), 404
+
+    # Ottiene i dati dal corpo della richiesta (JSON)
+    # request.get_json() analizza il corpo JSON della richiesta HTTP
+    data = request.get_json()
+
+    # Estrae i campi da aggiornare, fornendo un valore predefinito (quello esistente)
+    # se il campo non è presente nel JSON della richiesta
+    name = data.get('name', message.name)
+    message_content = data.get('message_content', message.message_content)
+
+    # Validazione base dei dati ricevuti
+    if not name or not message_content:
+        return jsonify({'error': 'Nome e messaggio non possono essere vuoti!'}), 400 # 400 Bad Request
+
+    try:
+        # Aggiorna i campi del messaggio con i nuovi dati
+        message.name = name
+        message.message_content = message_content
+
+        # Esegue il commit per salvare le modifiche nel database
+        db.session.commit()
+
+        # Restituisce il messaggio aggiornato come JSON
+        updated_message_data = {
+            'id': message.id,
+            'name': message.name,
+            'message_content': message.message_content,
+            'created_at': message.created_at.isoformat()
+        }
+        return jsonify(updated_message_data), 200
+
+    except Exception as e:
+        db.session.rollback() # Annulla l'operazione in caso di errore
+        return jsonify({'error': f'Error updating message: {e}'}), 500
     
 # Cancella un messaggio per ID - DELETE convenzione standard per la rimozione di risorse in un'API RESTful
 @app.route('/api/messages/<int:message_id>', methods=['DELETE']) 
