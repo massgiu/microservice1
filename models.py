@@ -1,5 +1,5 @@
 from datetime import datetime
-from . import db # Assicurati che l'import di db sia corretto (da __init__.py se usi package)
+from . import db # import del db da __init__.py
 
 # Modello per i messaggi (già esistente)
 class Message(db.Model):
@@ -14,7 +14,7 @@ class Message(db.Model):
 # NUOVO Modello per i video
 class Video(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # La URL del video TikTok (potrebbe essere la URL diretta o la URL embed)
+    # La URL del video (potrebbe essere la URL diretta o la URL embed)
     url = db.Column(db.String(500), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=True) # Descrizione opzionale

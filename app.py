@@ -1,33 +1,12 @@
 from flask import Flask, jsonify, request, render_template # Aggiungi render_template per le pagine HTML
-from flask_sqlalchemy import SQLAlchemy # Importa SQLAlchemy
+# Importa l'oggetto 'db' e la funzione 'create_app' dal package __init__.py
+from . import db, create_app
+from .models import Message, Video # Questo import ora funzionerà!
+from datetime import datetime # Assicurati che sia presente se lo usi in Message/Video models
 
-# Inizializziamo l'applicazione Flask
-app = Flask(__name__)
 
-# --- Configurazione del Database ---
-# Specifica l'URI del database. Per SQLite, è 'sqlite:///nome_file.db'.
-# Il database verrà creato nella stessa cartella di app.py.
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-# Disabilita il tracciamento delle modifiche, che consuma memoria extra e non è strettamente necessario per piccoli progetti.
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Inizializza l'istanza di SQLAlchemy con l'app Flask
-db = SQLAlchemy(app)
-
-# --- Definizione del Modello del Database ---
-# Creiamo un modello per immagazzinare i messaggi/feedback dal form.
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    # Campo per il nome (può essere nullo, ma lo rendiamo non nullo per semplicità)
-    name = db.Column(db.String(80), nullable=False)
-    # Campo per il contenuto del messaggio (testo lungo)
-    message_content = db.Column(db.Text, nullable=False)
-    # Campo per la data di creazione (default alla data/ora corrente)
-    created_at = db.Column(db.DateTime, default=db.func.now())
-
-    # Metodo per una rappresentazione leggibile dell'oggetto Message
-    def __repr__(self):
-        return f"<Message {self.id}: {self.name}>"
+# Crea l'istanza dell'applicazione chiamando la factory function
+app = create_app()
     
 # Route per la pagina principale con il form e la lista dei messaggi
 @app.route('/', methods=['GET','POST'])

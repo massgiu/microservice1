@@ -24,7 +24,7 @@ def create_app():
     with app.app_context():
         # Questo importa semplicemente il modulo 'models' per assicurarsi che
         # le classi dei modelli siano registrate con SQLAlchemy.
-        from . import models # L'import è corretto qui!
+        from . import models
         db.create_all() # Crea tutte le tabelle definite nei modelli
 
     # 5. Importa le tue route e registrale (questo esempio presuppone app.py contiene le route)
