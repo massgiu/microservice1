@@ -34,7 +34,7 @@ class Message(db.Model):
 def home():
     error = None
     success = None
-
+    #called by index.html after submit pressed
     if request.method == 'POST':
         # Recupera i dati dal form
         name = request.form['name']
@@ -109,6 +109,27 @@ def get_message(message_id):
 
         # Restituisce il dizionario come risposta JSON
         return jsonify(message_data)
+    
+# Cancella un messaggio per ID - DELETE convenzione standard per la rimozione di risorse in un'API RESTful
+@app.route('/api/messages/<int:message_id>', methods=['DELETE']) 
+def delete_message(message_id):
+    message = db.session.execute(db.select(Message).filter_by(id=message_id)).scalar_one_or_none()
+
+    if message is None:
+        # Se il messaggio non è stato trovato, restituisce una risposta 404 Not Found
+        return jsonify({'error': 'Message not found'}), 404
+
+    try:
+        # Se il messaggio esiste, lo elimina dalla sessione del database
+        db.session.delete(message)
+        # Esegue il commit per salvare le modifiche nel database
+        db.session.commit()
+        # Restituisce una risposta di successo (status 204 No Content è comune per DELETE)
+        return jsonify({'message': 'Message deleted successfully'}), 200
+        # Oppure puoi usare return '', 204 se non vuoi un corpo nella risposta di successo
+    except Exception as e:
+        db.session.rollback() # Annulla l'operazione in caso di errore
+        return jsonify({'error': f'Error deleting message: {e}'}), 500
 
 # Endpoint di "health check"
 # Un endpoint di health check serve per verificare che il servizio sia attivo e funzionante.
