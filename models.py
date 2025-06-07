@@ -1,5 +1,5 @@
-from datetime import datetime
 from . import db # import del db da __init__.py
+from datetime import datetime
 
 # Modello per i messaggi (già esistente)
 class Message(db.Model):

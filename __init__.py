@@ -19,8 +19,6 @@ def create_app():
     db.init_app(app)
 
     # 4. Importa i modelli e crea le tabelle all'interno del contesto dell'applicazione
-    # Questo è importante per evitare importazioni circolari e per assicurare
-    # che le tabelle vengano create solo quando l'applicazione è pronta.
     with app.app_context():
         # Questo importa semplicemente il modulo 'models' per assicurarsi che
         # le classi dei modelli siano registrate con SQLAlchemy.
@@ -28,8 +26,7 @@ def create_app():
         db.create_all() # Crea tutte le tabelle definite nei modelli
 
     # 5. Importa le tue route e registrale (questo esempio presuppone app.py contiene le route)
-    # È comune usare Blueprints per questo, ma per semplicità ora,
-    # puoi importare direttamente app.py per le route se non usi Blueprints.
-    # Per il nostro scopo attuale, non è necessario importare app.py qui se FLASK_APP punta a app.py.
+
+    from . import routes  #Questo fa registrare tutte le @app.route
 
     return app

@@ -9,7 +9,7 @@ from datetime import datetime # Assicurati che sia presente se lo usi in Message
 app = create_app()
     
 # Route per la pagina principale con il form e la lista dei messaggi
-@app.route('/', methods=['GET','POST'])
+@app.route('/', methods=['GET','POST'], endpoint='index_page')
 def home():
     error = None
     success = None
@@ -28,10 +28,9 @@ def home():
                 new_message = Message(name=name, message_content=message_content)
 
                 # Aggiungi il nuovo messaggio alla sessione del database
-                with app.app_context(): # Necessario per operazioni DB fuori contesto richiesta
-                    db.session.add(new_message)
-                    # Esegui il commit per salvare i dati nel database
-                    db.session.commit()
+                db.session.add(new_message)
+                # Esegui il commit per salvare i dati nel database
+                db.session.commit()
                 success = "Messaggio inviato con successo!"
             except Exception as e:
                 db.session.rollback() # Annulla l'operazione in caso di errore
@@ -42,6 +41,10 @@ def home():
     all_messages = db.session.execute(db.select(Message).order_by(Message.created_at.desc())).scalars().all()
     # Passiamo i messaggi al template
     return render_template('index.html', messages=all_messages, error=error, success=success)
+
+@app.route('/video', endpoint='video_page')
+def video_page():
+    return render_template('video.html')
 
 # Ottieni tutti i messaggi
 @app.route('/api/messages', methods=['GET'])
@@ -68,26 +71,25 @@ def get_all_messages():
 # Ottieni un singolo messaggio dal suo ID
 @app.route('/api/messages/<int:message_id>', methods=['GET'])
 def get_message(message_id):
-    with app.app_context():
-        # Cerca il messaggio per ID nel database
-        # .first_or_404() è un metodo conveniente di Flask-SQLAlchemy
-        # che restituisce l'oggetto trovato o un errore 404 se non esiste
-        message = db.session.execute(db.select(Message).filter_by(id=message_id)).scalar_one_or_none()
+    # Cerca il messaggio per ID nel database
+    # .first_or_404() è un metodo conveniente di Flask-SQLAlchemy
+    # che restituisce l'oggetto trovato o un errore 404 se non esiste
+    message = db.session.execute(db.select(Message).filter_by(id=message_id)).scalar_one_or_none()
 
-        if message is None:
-            # Se il messaggio non è stato trovato, restituisce una risposta 404 Not Found
-            return jsonify({'error': 'Message not found'}), 404
+    if message is None:
+        # Se il messaggio non è stato trovato, restituisce una risposta 404 Not Found
+        return jsonify({'error': 'Message not found'}), 404
 
-        # Converte l'oggetto Message in un dizionario Python
-        message_data = {
-            'id': message.id,
-            'name': message.name,
-            'message_content': message.message_content,
-            'created_at': message.created_at.isoformat()
-        }
+    # Converte l'oggetto Message in un dizionario Python
+    message_data = {
+        'id': message.id,
+        'name': message.name,
+        'message_content': message.message_content,
+        'created_at': message.created_at.isoformat()
+    }
 
-        # Restituisce il dizionario come risposta JSON
-        return jsonify(message_data)
+    # Restituisce il dizionario come risposta JSON
+    return jsonify(message_data)
 
 # Aggiorna un messaggio attraverso ID
 @app.route('/api/messages/<int:message_id>', methods=['PUT'])
