@@ -1,3 +1,9 @@
 create_db.py
 .dockerignore
+# Ignora le cartelle di cache di Python
+__pycache__/
+# Ignora le cartella instance di Python
 /instance/
+
+*.pyc
+*.sqlite3
