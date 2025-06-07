@@ -44,7 +44,8 @@ def home():
 
 @app.route('/video', endpoint='video_page')
 def video_page():
-    return render_template('video.html')
+    all_videos = db.session.execute(db.select(Video).order_by(Video.created_at.desc())).scalars().all()
+    return render_template('video.html',videos=all_videos)
 
 # Ottieni tutti i messaggi
 @app.route('/api/messages', methods=['GET'])
