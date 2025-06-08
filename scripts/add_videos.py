@@ -26,23 +26,23 @@ app = create_app()
 with app.app_context():
     # Esempio di URL embed di TikTok (dovrai trovarne uno vero per testare)
     # Questi URL possono essere diversi a seconda della versione dell'API di TikTok
-    sample_video_url_1 = "https://www.tiktok.com/embed/v2/7374768374938363649" # Questo è un esempio, non reale
-    sample_video_url_2 = "https://www.tiktok.com/embed/v2/7374768374938363650" # Questo è un esempio, non reale
-
-    video1 = Video(
-        url=sample_video_url_1,
-        title="Il mio primo TikTok",
-        description="Un video divertente!",
-        tags="funny, cat"
-    )
-    video2 = Video(
-        url=sample_video_url_2,
-        title="Ricetta Veloce",
-        description="Come fare la pizza in 5 minuti",
-        tags="cooking, food"
-    )
-
-    db.session.add(video1)
-    db.session.add(video2)
+    # Esempio di come dovrebbero essere i video_to_add:
+    videos_to_add = [
+        {"url": "https://www.tiktok.com/embed/7361664188730877216", "title": "Gatto Pazzo", "description": "Un gatto che fa acrobazie assurde.", "tags": "gatto, divertente, animali"},
+        {"url": "https://www.tiktok.com/embed/7376045542861217056", "title": "Ricetta Veloce", "description": "Torta al cioccolato in 5 minuti.", "tags": "cucina, dolce, ricetta, veloce"},
+        {"url": "https://www.tiktok.com/embed/7370395780517565729", "title": "Cane che Balla", "description": "Un simpatico cane che balla la salsa.", "tags": "cane, divertente, animali, ballo"},
+        {"url": "https://www.tiktok.com/embed/7376483562370778401", "title": "Consigli di Studio", "description": "Tecniche efficaci per memorizzare velocemente.", "tags": "studio, apprendimento, consigli"},
+        {"url": "https://www.tiktok.com/embed/736181966453966570", "title": "Drone Fantastico", "description": "Volo mozzafiato con il drone al tramonto.", "tags": "drone, natura, paesaggio, volo"}
+    ]
+    for elem in videos_to_add:
+        video = Video(
+            url=elem["url"],
+            title=elem["title"],
+            description=elem["description"],
+            tags=elem["tags"]
+        )
+        db.session.add(video)
     db.session.commit()
+
+    
     print("Video di esempio aggiunti al database!")

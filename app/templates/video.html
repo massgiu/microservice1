@@ -3,28 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>I Miei Video TikTok</title>
+     <title>Collezione di Video</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>I Miei Video da TikTok</h1>
+    <div class="main-layout-container">
+        <div class="sidebar">
+            <h3>Filtra per Tag</h3>
+            <ul>
+                <li><a href="{{ url_for('video_page') }}" {% if not current_filter_tag %}class="active"{% endif %}>Tutti i Video</a></li>
+                {% for tag in unique_tags %}
+                    <li><a href="{{ url_for('video_page', tag_filter=tag) }}" {% if current_filter_tag == tag %}class="active"{% endif %}>{{ tag | capitalize }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="content">
+            <h1>Collezione di Video</h1>
 
-    <div class="video-grid">
-        {% if videos %}
-            {% for video in videos %}
-            <div class="video-item">
-                <h3>{{ video.title }}</h3>
-                <p>{{ video.description }}</p>
-                <iframe src="{{ video.url }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                <small>Tags: {{ video.tags }}</small>
+            <div class="video-grid">
+                {% if videos %}
+                    {% for video in videos %}
+                    <div class="video-item">
+                        {% if video.url.startswith('https://www.tiktok.com/embed/') %}
+                            <div class="video-embed">
+                                <iframe src="{{ video.url }}" allowfullscreen scrolling="no" frameborder="0" loading="lazy"></iframe>
+                            </div>
+                        {% else %}
+                            <p>URL Video: <a href="{{ video.url }}" target="_blank">{{ video.url }}</a></p>
+                        {% endif %}
+                        <h4>{{ video.title }}</h4>
+                        <p>{{ video.description }}</p>
+                        <div class="tags">Tags: {{ video.tags }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Nessun video trovato{% if current_filter_tag %} per il tag "{{ current_filter_tag }}"{% endif %}.</p>
+                {% endif %}
             </div>
-            {% endfor %}
-        {% else %}
-            <p>Nessun video trovato. Inserisci alcuni video nel database con lo script `add_videos.py`!</p>
-        {% endif %}
+        </div>
     </div>
 
-    <hr>
-    <p><a href="{{ url_for('index_page') }}">Torna alla pagina principale</a></p>
+    <script async src="https://www.tiktok.com/embed.js"></script>
 </body>
 </html>

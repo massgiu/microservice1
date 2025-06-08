@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, render_template # Aggiungi render_template per le pagine HTML
+import re
 
 from .models import Message, Video # quel punto indica dove c'è __init__
 from datetime import datetime # Assicurati che sia presente se lo usi in Message/Video models
@@ -42,10 +43,41 @@ def register_routes(app_instance, db_instance): # Riceve l'istanza di app e db
         # Passiamo i messaggi al template
         return render_template('index.html', messages=all_messages, error=error, success=success)
 
-    @app_instance.route('/video', endpoint='video_page')
+    """ @app_instance.route('/video', methods=['GET'], endpoint='video_page')
     def video_page():
         all_videos = db_instance.session.execute(db_instance.select(Video).order_by(Video.created_at.desc())).scalars().all()
-        return render_template('video.html',videos=all_videos)
+        return render_template('video.html',videos=all_videos) """
+    
+    # Questa route ora accetta un parametro opzionale 'tag_filter' nell'URL
+    @app_instance.route('/video', methods=['GET'], endpoint='video_page')
+    @app_instance.route('/video/tag/<string:tag_filter>', methods=['GET'], endpoint='video_page')
+    def video_page(tag_filter=None): # tag_filter sarà None se non presente nell'URL
+        query = db_instance.select(Video).order_by(Video.created_at.desc())
+
+        # Applica il filtro se un tag è stato specificato nell'URL
+        if tag_filter:
+            # Filtra i video dove la stringa 'tags' contiene il tag specifico
+            # LOWER() per rendere la ricerca case-insensitive
+            query = query.filter(db_instance.func.lower(Video.tags).like(f'%{tag_filter.lower()}%'))
+
+        all_videos = db_instance.session.execute(query).scalars().all()
+
+        # Estrai tutti i tag unici da TUTTI i video (per popolare il menu laterale)
+        all_raw_tags = [tag_string for tag_string in db_instance.session.execute(db_instance.select(Video.tags)).scalars().all() if tag_string]
+        unique_tags_set = set()
+        for tag_string in all_raw_tags:
+            # Divido la stringa per virgola, rimuovo spazi extra, tolgo caratteri non alfanumerici e rendo minuscolo
+            tags_list = [re.sub(r'[^a-zA-Z0-9\s]', '', t.strip().lower()) for t in tag_string.split(',')]
+            unique_tags_set.update(tags_list)
+
+        # Rimuovi eventuali tag vuoti che potrebbero essere stati creati dal processo di pulizia
+        unique_tags_set.discard('')
+
+        # Converti in lista e ordina alfabeticamente per il menu
+        unique_tags = sorted(list(unique_tags_set))
+
+        # Passa i video, i tag unici e il tag attualmente filtrato al template
+        return render_template('video.html', videos=all_videos, unique_tags=unique_tags, current_filter_tag=tag_filter)
 
     # Ottieni tutti i messaggi
     @app_instance.route('/api/messages', methods=['GET'])

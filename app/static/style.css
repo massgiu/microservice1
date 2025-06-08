@@ -1,22 +1,102 @@
 /* Contenuto di static/style.css */
-body { 
+
+body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0; /* Rimuovi i margini dal body per permettere al container di riempire la larghezza */
+    padding: 0;
     background-color: #f4f4f4;
+    display: flex; /* Aggiungi display: flex al body per l'altezza del container */
+    min-height: 100vh; /* Assicura che il body occupi almeno l'altezza del viewport */
 }
-.container {
+
+/* Regole per il layout a due colonne (sidebar + contenuto) */
+.main-layout-container { /* Un nuovo contenitore principale per il layout Flexbox */
+    display: flex; /* Abilita Flexbox per disporre sidebar e contenuto fianco a fianco */
+    width: 100%; /* Assicurati che occupi tutta la larghezza disponibile */
+    /* Rimuovi max-width, padding, border-radius, box-shadow e margin: auto da .container se vuoi che occupi tutta la larghezza */
+}
+
+.sidebar {
+    width: 250px; /* Larghezza fissa per la sidebar, puoi adattarla */
+    background-color: #e0e0e0; /* Colore di sfondo diverso per la sidebar */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    flex-shrink: 0; /* Impedisce che la sidebar si restringa */
+    overflow-y: auto; /* Aggiunge scroll se il contenuto della sidebar è troppo lungo */
+    color: #333; /* Colore testo per la sidebar */
+}
+
+.sidebar h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 8px;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #007bff;
+    display: block;
+    padding: 8px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sidebar ul li a:hover {
+    background-color: #cceeff; /* Sfondo al passaggio del mouse */
+    color: #0056b3;
+}
+
+.sidebar ul li a.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.content {
+    flex-grow: 1; /* Il contenuto prende tutto lo spazio rimanente */
+    padding: 20px;
+    background-color: #fff; /* Sfondo bianco per il contenitore dei video */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombra per il contenitore dei video */
+    margin: 20px; /* Aggiungi un margine intorno al blocco del contenuto */
+    border-radius: 8px; /* Bordi arrotondati per il contenitore dei video */
+}
+
+/* Regole CSS esistenti e adattate */
+.container { /* Rinomina questa classe o usala solo per la pagina index */
+    /* Queste regole erano per un layout centrato, non adatte per il layout a due colonne */
+    /* Se questo .container è quello della pagina index, lascialo così.
+       Se è quello che usi per raggruppare sidebar e content, rimuovi queste regole */
     background-color: #fff;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    max-width: 500px;
+    max-width: 500px; /* Questo limiterà la larghezza del contenitore principale, non voluta per sidebar+grid */
     margin: auto;
 }
-h1 { 
+
+/* Se `.container` è il contenitore principale di tutto il layout (sidebar + content),
+   allora rinomina `body` in `.container` e imposta `body { margin: 0; padding: 0; }`
+   Oppure, introduci una nuova classe per il contenitore principale.
+   Ho introdotto `main-layout-container` sopra.
+*/
+
+h1 {
     color: #333;
     text-align: center;
     margin-bottom: 25px;
-    margin-top: 30px;
+    margin-top: 0; /* Rimuovi margin-top: 30px per h1 nel content */
 }
 p {
     text-align: center;
@@ -25,7 +105,8 @@ p {
 label {
     display: block;
     margin-bottom: 8px;
-    font-weight: bold; color: #555;
+    font-weight: bold;
+    color: #555;
 }
 input[type="text"], textarea {
     width: calc(100% - 20px);
@@ -85,22 +166,56 @@ button:hover {
     margin-bottom: 15px;
     text-align: center;
 }
+/* Regole per la griglia dei video (già buone, adattate leggermente) */
 .video-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Griglia responsiva */
     gap: 20px;
-    padding: 20px;
+    /* padding: 20px; Rimosso, il padding è gestito dal .content */
 }
 .video-item {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: center;
-    background-color: #f9f9f9;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #ddd; /* Cambiato da #ccc a #ddd per coerenza */
+    padding: 15px; /* Aumentato il padding per un aspetto migliore */
+    text-align: left; /* Allinea il testo a sinistra, non al centro */
+    background-color: #fff; /* Sfondo bianco per il singolo item */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Ombra più leggera */
+    border-radius: 8px; /* Bordi arrotondati */
+}
+.video-item h4 {
+    margin-top: 10px; /* Aggiungi un po' di margine superiore */
+    margin-bottom: 5px; /* Riduci il margine inferiore */
+}
+.video-item p {
+    font-size: 0.9em;
+    color: #666;
+    text-align: left; /* Assicura che la descrizione sia allineata a sinistra */
+    margin-bottom: 10px;
+}
+.video-item .tags {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 5px; /* Riduci il margine superiore */
+    text-align: left; /* Allinea i tag a sinistra */
 }
 .video-item iframe {
     width: 100%;
-    height: 350px; /* Altezza fissa per i video embed */
+    /* Altezza fissa per i video embed può causare problemi di aspect ratio.
+       Meglio usare una tecnica responsive come per .video-embed */
+    /* height: 350px; */
     border: none;
-    overflow: hidden; /* Nasconde scrollbar se l'embed è troppo grande */
+    overflow: hidden;
 }
+/* Regole per rendere l'iframe responsive all'interno di .video-item */
+.video-embed {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio (9 / 16 * 100) */
+    height: 0;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.video-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
