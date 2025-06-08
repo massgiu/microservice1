@@ -11,9 +11,9 @@
         <div class="sidebar">
             <h3>Filtra per Tag</h3>
             <ul>
-                <li><a href="{{ url_for('video_page') }}" {% if not current_filter_tag %}class="active"{% endif %}>Tutti i Video</a></li>
+                <li><a href="{{ url_for('main.video_page') }}" {% if not current_filter_tag %}class="active"{% endif %}>Tutti i Video</a></li>
                 {% for tag in unique_tags %}
-                    <li><a href="{{ url_for('video_page', tag_filter=tag) }}" {% if current_filter_tag == tag %}class="active"{% endif %}>{{ tag | capitalize }}</a></li>
+                    <li><a href="{{ url_for('main.video_page', tag_filter=tag) }}" {% if current_filter_tag == tag %}class="active"{% endif %}>{{ tag | capitalize }}</a></li>
                 {% endfor %}
             </ul>
         </div>

@@ -33,9 +33,9 @@ def create_app():
         # le classi dei modelli siano registrate con SQLAlchemy.
         from . import models
         db.create_all() # Crea tutte le tabelle definite nei modelli
-
-    # *** Importa e registra la tua Blueprint qui ***
-    from .app import register_routes  # Importa la funzione dal modulo app.py
-    register_routes(app, db) # Passa l'istanza app e db alla funzione per registrare le route
+        
+    # Importa e registra la Blueprint ***
+    from .main_routes import main # Importa l'istanza 'main' della Blueprint
+    app.register_blueprint(main) # Registra la Blueprint con l'applicazione
 
     return app
