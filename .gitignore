@@ -7,3 +7,4 @@ __pycache__/
 
 *.pyc
 *.sqlite3
+__pycache__/app.cpython-313.pyc
