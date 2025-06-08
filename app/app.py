@@ -52,9 +52,10 @@ def register_routes(app_instance, db_instance): # Riceve l'istanza di app e db
     @app_instance.route('/video', methods=['GET'], endpoint='video_page')
     @app_instance.route('/video/tag/<string:tag_filter>', methods=['GET'], endpoint='video_page')
     def video_page(tag_filter=None): # tag_filter sarà None se non presente nell'URL
+        # SELECT * FROM video - la query non è eseguita
         query = db_instance.select(Video).order_by(Video.created_at.desc())
 
-        # Applica il filtro se un tag è stato specificato nell'URL
+        # Se un tag passato nella url, allora filtro la query
         if tag_filter:
             # Filtra i video dove la stringa 'tags' contiene il tag specifico
             # LOWER() per rendere la ricerca case-insensitive
@@ -63,7 +64,9 @@ def register_routes(app_instance, db_instance): # Riceve l'istanza di app e db
         all_videos = db_instance.session.execute(query).scalars().all()
 
         # Estrai tutti i tag unici da TUTTI i video (per popolare il menu laterale)
-        all_raw_tags = [tag_string for tag_string in db_instance.session.execute(db_instance.select(Video.tags)).scalars().all() if tag_string]
+        # SELECT tags FROM video; output: ['gatto,divertente', 'cucina,veloce', 'drone,volo']
+        tags_column  = db_instance.session.execute(db_instance.select(Video.tags)).scalars().all()
+        all_raw_tags = [tag_string for tag_string in tags_column if tag_string]
         unique_tags_set = set()
         for tag_string in all_raw_tags:
             # Divido la stringa per virgola, rimuovo spazi extra, tolgo caratteri non alfanumerici e rendo minuscolo
