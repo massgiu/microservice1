@@ -27,4 +27,10 @@ EXPOSE 5000
 # Definisce il comando che verrà eseguito quando il container viene avviato.
 # Qui, avviamo il nostro microservizio Flask.
 # Usiamo la forma exec (list of strings) che è preferibile per i comandi principali.
-CMD ["python", "app.py"]
+# Ora Flask cercherà il package 'app'
+ENV FLASK_APP=app 
+ENV FLASK_RUN_HOST=0.0.0.0
+
+# Usa 'flask run' per semplicità in sviluppo
+# Per produzione, si userebbe un server WSGI come Gunicorn o uWSGI
+CMD ["flask", "run"]

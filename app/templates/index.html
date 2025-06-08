@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lascia un Messaggio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <p><a href="{{ url_for('video_page') }}">Vai alla pagina dei Video</a></p>
+    <div class="container">
+    <h1>I Miei Messaggi</h1>
+    
+        <h1>Lascia un Messaggio</h1>
+
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+        <p class="success">{{ success }}</p>
+        {% endif %}
+
+        <form action="/" method="POST">
+            <label for="name">Il tuo Nome:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="message_content">Il tuo Messaggio:</label>
+            <textarea id="message_content" name="message_content" required></textarea>
+
+            <button type="submit">Invia Messaggio</button>
+        </form>
+
+        <div class="message-list">
+            <h2>Messaggi Ricevuti:</h2>
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="message-item">
+                        <strong>{{ msg.name }}</strong> <small>({{ msg.created_at.strftime('%Y-%m-%d %H:%M:%S') }})</small><br>
+                        {{ msg.message_content }}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Ancora nessun messaggio. Sii il primo!</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

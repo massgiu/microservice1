@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>I Miei Video TikTok</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>I Miei Video da TikTok</h1>
+
+    <div class="video-grid">
+        {% if videos %}
+            {% for video in videos %}
+            <div class="video-item">
+                <h3>{{ video.title }}</h3>
+                <p>{{ video.description }}</p>
+                <iframe src="{{ video.url }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <small>Tags: {{ video.tags }}</small>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>Nessun video trovato. Inserisci alcuni video nel database con lo script `add_videos.py`!</p>
+        {% endif %}
+    </div>
+
+    <hr>
+    <p><a href="{{ url_for('index_page') }}">Torna alla pagina principale</a></p>
+</body>
+</html>
