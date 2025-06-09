@@ -20,6 +20,16 @@
         <div class="content">
             <h1>Collezione di Video</h1>
 
+             <div class="search-bar">
+                <form action="{{ url_for('main.video_page') }}" method="GET">
+                    <input type="text" name="q" placeholder="Cerca nella descrizione..." value="{{ current_search_query or '' }}">
+                    <button type="submit">Cerca</button>
+                    {% if current_search_query %}
+                        <a href="{{ url_for('main.video_page', tag_filter=current_filter_tag) }}" class="clear-search">Pulisci ricerca</a>
+                    {% endif %}
+                </form>
+            </div>
+
             <div class="video-grid">
                 {% if videos %}
                     {% for video in videos %}
@@ -37,7 +47,7 @@
                     </div>
                     {% endfor %}
                 {% else %}
-                    <p>Nessun video trovato{% if current_filter_tag %} per il tag "{{ current_filter_tag }}"{% endif %}.</p>
+                    <p>Nessun video trovato{% if current_filter_tag %} per il tag "{{ current_filter_tag }}"{% endif %}{% if current_search_query %} per la ricerca "{{ current_search_query }}"{% endif %}.</p>
                 {% endif %}
             </div>
         </div>

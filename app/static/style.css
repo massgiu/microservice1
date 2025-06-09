@@ -73,16 +73,14 @@ body {
     border-radius: 8px; /* Bordi arrotondati per il contenitore dei video */
 }
 
-/* Regole CSS esistenti e adattate */
 .container { /* Rinomina questa classe o usala solo per la pagina index */
-    /* Queste regole erano per un layout centrato, non adatte per il layout a due colonne */
-    /* Se questo .container è quello della pagina index, lascialo così.
-       Se è quello che usi per raggruppare sidebar e content, rimuovi queste regole */
+
     background-color: #fff;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    max-width: 500px; /* Questo limiterà la larghezza del contenitore principale, non voluta per sidebar+grid */
+    width: 100%;
+    max-width: 800px; /* Questo limiterà la larghezza del contenitore principale, non voluta per sidebar+grid */
     margin: auto;
 }
 
@@ -219,3 +217,56 @@ button:hover {
     top: 0;
     left: 0;
     width: 100%;
+}
+.search-bar {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    display: flex; /* Per allineare input e button */
+    gap: 10px; /* Spazio tra gli elementi */
+    align-items: center; /* Centra verticalmente */
+}
+
+.search-bar form {
+    display: flex; /* Rende il form un container flex */
+    gap: 10px; /* Spazio tra gli elementi interni del form (input, button, link) */
+    align-items: center; /* Allinea verticalmente al centro gli elementi */
+    width: 100%; /* Assicura che il form occupi tutta la larghezza disponibile all'interno di .search-bar */
+}
+
+.search-bar input[type="text"] {
+    flex-grow: 1; /* L'input prende lo spazio disponibile */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 0; /* Rimuovi il margin-bottom predefinito */
+}
+
+.search-bar button {
+    padding: 10px 15px;
+    background-color: #28a745; /* Un bel verde per il bottone di ricerca */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: auto; /* Sovrascrivi il width: 100% globale del button */
+}
+
+.search-bar button:hover {
+    background-color: #218838;
+}
+
+.search-bar .clear-search {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #dc3545; /* Colore rosso per pulire la ricerca */
+    font-size: 0.9em;
+}
+
+.search-bar .clear-search:hover {
+    text-decoration: underline;
+}
