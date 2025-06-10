@@ -9,6 +9,9 @@ import re # Importa re per espressioni regolari per pulire i tag
 from . import db
 from .models import Message, Video
 
+# Importa le funzioni per interagire con l'API di YouTube
+from .youtube_service import get_latest_video, get_all_videos_from_channel 
+
 # Inizializza la Blueprint
 # 'main' è il nome della tua Blueprint. Sarà usato nei nomi degli endpoint (es. 'main.index')
 main = Blueprint('main', __name__) #Questa instanza sarà usata in __init__
@@ -57,46 +60,28 @@ def home():
 @main.route('/video/tag/<string:tag_filter>', methods=['GET'], endpoint='video_page')
 def video_page(tag_filter=None): # tag_filter sarà None se non presente nell'URL
 
-    # Ottieni il termine di ricerca dalla query string, se presente
-    # request.args.get('q') recupera il valore del parametro 'q' dall'URL (es. ?q=gatto)
-    search_query = request.args.get('q', '').strip() # .strip() rimuove spazi bianchi extra
-
-    # SELECT * FROM video - la query non è eseguita
-    query = db.select(Video).order_by(Video.created_at.desc())
-
-    # Se un tag passato nella url (clicco menu laterale), allora filtro la query
-    if tag_filter:
-        # Filtra i video dove la stringa 'tags' contiene il tag specifico
-        # LOWER() per rendere la ricerca case-insensitive
-        query = query.filter(db.func.lower(Video.tags).like(f'%{tag_filter.lower()}%'))
+    youtube_videos = get_all_videos_from_channel(max_results=25) 
     
-     # Se viene passato un termine di ricerca, allora filtro la query
-    if search_query:
-        # Applica il filtro alla descrizione, rendendo la ricerca case-insensitive
-        # e cercando il termine ovunque nella descrizione
-        query = query.filter(db.func.lower(Video.description).like(f'%{search_query.lower()}%'))
+    search_query = request.args.get('q', '').strip()
 
-    all_videos = db.session.execute(query).scalars().all()
+    filtered_youtube_videos = []
+    for video in youtube_videos:
+        match = True
+        if search_query:
+            if search_query.lower() not in video['title'].lower() and \
+               search_query.lower() not in video['description'].lower():
+                match = False
+        
+        if match:
+            filtered_youtube_videos.append(video)
 
-    # Estrai tutti i tag unici da TUTTI i video (per popolare il menu laterale)
-    # SELECT tags FROM video; output: ['gatto,divertente', 'cucina,veloce', 'drone,volo']
-    tags_column  = db.session.execute(db.select(Video.tags)).scalars().all()
-    all_raw_tags = [tag_string for tag_string in tags_column if tag_string]
-    unique_tags_set = set()
-    for tag_string in all_raw_tags:
-        # Divido la stringa per virgola, rimuovo spazi extra, tolgo caratteri non alfanumerici e rendo minuscolo
-        tags_list = [re.sub(r'[^a-zA-Z0-9\s]', '', t.strip().lower()) for t in tag_string.split(',')]
-        unique_tags_set.update(tags_list)
+    # Nota: unique_tags rimane vuota qui perché i video provengono da YouTube
+    unique_tags = [] 
 
-    # Rimuovi eventuali tag vuoti che potrebbero essere stati creati dal processo di pulizia
-    unique_tags_set.discard('')
-
-    # Converti in lista e ordina alfabeticamente per il menu
-    unique_tags = sorted(list(unique_tags_set))
-
-    # Passa i video, i tag unici, il tag attualmente filtrato al template, termine di ricerca
-    return render_template('video.html', videos=all_videos, unique_tags=unique_tags,
-                           current_filter_tag=tag_filter, current_search_query=search_query)
+    # --- MODIFICA QUESTA RIGA ---
+    # Cambia 'video.html' in 'video2.html'
+    return render_template('video2.html', videos=filtered_youtube_videos, unique_tags=unique_tags,
+                             current_filter_tag=tag_filter, current_search_query=search_query)
 
 # Ottieni tutti i messaggi
 @main.route('/api/messages', methods=['GET'])

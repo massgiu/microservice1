@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video YouTube</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; display: flex; }
+        .sidebar { width: 200px; background-color: #f0f0f0; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li a { text-decoration: none; color: #333; display: block; padding: 8px 0; border-bottom: 1px solid #eee; }
+        .sidebar li a:hover { color: #007bff; }
+        .content { flex-grow: 1; padding: 20px; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .video-item { background: white; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .video-thumbnail { width: 100%; height: 180px; object-fit: cover; }
+        .video-info { padding: 15px; }
+        .video-title { font-size: 1.2em; margin-top: 0; margin-bottom: 10px; color: #333; }
+        .video-description { font-size: 0.9em; color: #666; max-height: 60px; overflow: hidden; text-overflow: ellipsis; }
+        .search-form { margin-bottom: 20px; }
+        .search-form input[type="text"] { width: 70%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .search-form button { padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .search-form button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Tag</h2>
+        <ul>
+            <li><a href="{{ url_for('main.video_page') }}">Tutti i Video</a></li>
+            {% if unique_tags %}
+                {% for tag in unique_tags %}
+                    <li><a href="{{ url_for('main.video_page', tag_filter=tag) }}">{{ tag.capitalize() }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li>Nessun tag disponibile (i video provengono da YouTube)</li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="content">
+        <h1>Video YouTube</h1>
+
+        <div class="search-form">
+            <form action="{{ url_for('main.video_page') }}" method="GET">
+                <input type="text" name="q" placeholder="Cerca video per descrizione..." value="{{ current_search_query }}">
+                <button type="submit">Cerca</button>
+            </form>
+        </div>
+
+        {% if videos %}
+            <div class="video-grid">
+                {% for video in videos %}
+                    <div class="video-item">
+                        <a href="{{ video.embed_url }}" target="_blank">
+                            <img src="{{ video.thumbnail_url }}" alt="{{ video.title }}" class="video-thumbnail">
+                        </a>
+                        <div class="video-info">
+                            <h3 class="video-title">
+                                <a href="{{ video.embed_url }}" target="_blank">{{ video.title }}</a>
+                            </h3>
+                            <p class="video-description">{{ video.description }}</p>
+                            {% if video.published_at %}
+                                <p style="font-size: 0.8em; color: #999;">Pubblicato il: {{ video.published_at.strftime('%Y-%m-%d') }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nessun video trovato. Verifica la configurazione della tua API Key o l'ID del canale.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

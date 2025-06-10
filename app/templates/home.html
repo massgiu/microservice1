@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Mia Homepage con Ultimo Video YouTube</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #0056b3; text-align: center; }
+        .video-section { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        .video-title { font-size: 1.8em; color: #333; margin-bottom: 10px; }
+        .video-description { font-size: 0.9em; color: #666; margin-bottom: 20px; }
+        .video-player { width: 100%; height: 450px; border: none; }
+        .no-video { text-align: center; color: #ff0000; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Benvenuto sul Mio Microservizio!</h1>
+
+        <div class="video-section">
+            <h2>Ultimo Video Caricato</h2>
+            {% if latest_video %}
+                <h3 class="video-title">{{ latest_video.title }}</h3>
+                <iframe 
+                    class="video-player" 
+                    src="{{ latest_video.embed_url }}" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+                <p class="video-description">{{ latest_video.description }}</p>
+            {% else %}
+                <p class="no-video">Nessun ultimo video trovato o errore nel recupero. Assicurati che il canale abbia video e che la configurazione API sia corretta.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
