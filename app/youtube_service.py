@@ -76,12 +76,12 @@ def get_latest_video(channel_id=YOUTUBE_CHANNEL_ID):
         # Messaggi di errore generici, la diagnosi è stata fatta dal debug_api_build.py
         return None
 
-def get_all_videos_from_channel(channel_id=YOUTUBE_CHANNEL_ID, max_results=25):
+def get_all_videos_from_channel(channel_id=YOUTUBE_CHANNEL_ID, max_results=25, category_id=None):
     """
-    Recupera una lista di video da un canale YouTube.
+    Recupera una lista di video da un canale YouTube, con opzione di filtro per categoria.
     Restituisce una lista di dizionari con dettagli del video.
     """
-    if not YOUTUBE_API_KEY or not YOUTUBE_CHANNEL_ID: # Controllo per chiavi non impostate o vuote
+    if not YOUTUBE_API_KEY or not YOUTUBE_CHANNEL_ID: 
         print("ERRORE: API Key o Channel ID non configurati per il recupero video.")
         return []
 
@@ -94,14 +94,21 @@ def get_all_videos_from_channel(channel_id=YOUTUBE_CHANNEL_ID, max_results=25):
         try:
             results_to_fetch = min(max_results - current_results_count, 50)
             
+            # Aggiunto 'videoCategoryId' se specificato
+            search_params = {
+                "channelId": channel_id,
+                "type": "video",
+                "order": "date",
+                "part": "id,snippet",
+                "maxResults": results_to_fetch,
+                "pageToken": next_page_token,
+                "q": ""
+            }
+            if category_id:
+                search_params["videoCategoryId"] = category_id
+
             search_response = youtube.search().list(
-                channelId=channel_id,
-                type="video",
-                order="date",
-                part="id,snippet",
-                maxResults=results_to_fetch,
-                pageToken=next_page_token,
-                q=""
+                **search_params
             ).execute()
 
             for search_result in search_response.get("items", []):
@@ -118,7 +125,7 @@ def get_all_videos_from_channel(channel_id=YOUTUBE_CHANNEL_ID, max_results=25):
                         "id": video_id,
                         "title": title,
                         "description": description,
-                        "embed_url": f"https://www.youtube.com/embed/{video_id}",
+                        "embed_url": f"http://www.youtube.com/embed/{video_id}", # Correzione URL
                         "thumbnail_url": thumbnail_url,
                         "published_at": published_at
                     })
@@ -135,9 +142,32 @@ def get_all_videos_from_channel(channel_id=YOUTUBE_CHANNEL_ID, max_results=25):
     all_videos.sort(key=lambda x: x['published_at'], reverse=True)
     return all_videos
 
+def get_video_categories(region_code="IT"):
+    """
+    Recupera un elenco delle categorie video di YouTube per una data regione.
+    Restituisce una lista di dizionari { 'id': 'category_id', 'title': 'Category Name' }
+    """
+    try:
+        youtube = get_youtube_service()
+        response = youtube.videoCategories().list(
+            part="snippet",
+            regionCode=region_code
+        ).execute()
+
+        categories = []
+        for item in response.get('items', []):
+            categories.append({
+                'id': item['id'],
+                'title': item['snippet']['title']
+            })
+        return categories
+    except Exception as e:
+        print(f"Errore durante il recupero delle categorie video di YouTube: {e}")
+        return []
+
 # Rimosso il blocco if __name__ == "__main__": per test diretti.
 # Queste funzioni verranno chiamate dall'applicazione Flask.
-""" if __name__ == "__main__":
+if __name__ == "__main__":
     print("--- Test dell'ultimo video ---")
     latest = get_latest_video()
     if latest:
@@ -158,4 +188,13 @@ def get_all_videos_from_channel(channel_id=YOUTUBE_CHANNEL_ID, max_results=25):
             print(f"  Pubblicato il: {v.get('published_at').strftime('%Y-%m-%d %H:%M:%S')}")
             print(f"  URL Embed: {v.get('embed_url')}")
     else:
-        print("Nessun video trovato o errore di configurazione/rete.") """
+        print("Nessun video trovato o errore di configurazione/rete.")
+
+    print("Tentativo di recupero categorie YouTube...")
+    categories = get_video_categories()
+    if categories:
+        print(f"Recuperate {len(categories)} categorie:")
+        for cat in categories:
+            print(f"  - ID: {cat['id']}, Titolo: {cat['title']}")
+    else:
+        print("Nessuna categoria recuperata o errore. Controlla il messaggio sopra.")

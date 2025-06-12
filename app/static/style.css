@@ -1,37 +1,38 @@
 /* Contenuto di static/style.css */
 
+/* === Layout Principale === */
+
 body {
     font-family: Arial, sans-serif;
-    margin: 0; /* Rimuovi i margini dal body per permettere al container di riempire la larghezza */
+    margin: 0;
     padding: 0;
     background-color: #f4f4f4;
-    display: flex; /* Aggiungi display: flex al body per l'altezza del container */
-    min-height: 100vh; /* Assicura che il body occupi almeno l'altezza del viewport */
+    display: flex;
+    min-height: 100vh;
 }
 
-/* Regole per il layout a due colonne (sidebar + contenuto) */
-.main-layout-container { /* Un nuovo contenitore principale per il layout Flexbox */
-    display: flex; /* Abilita Flexbox per disporre sidebar e contenuto fianco a fianco */
-    width: 100%; /* Assicurati che occupi tutta la larghezza disponibile */
-    /* Rimuovi max-width, padding, border-radius, box-shadow e margin: auto da .container se vuoi che occupi tutta la larghezza */
+.main-layout-container {
+    display: flex;
+    width: 100%;
 }
+
+/* === Sidebar === */
 
 .sidebar {
-    width: 250px; /* Larghezza fissa per la sidebar, puoi adattarla */
-    background-color: #e0e0e0; /* Colore di sfondo diverso per la sidebar */
+    width: 250px;
+    background-color: #e0e0e0;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    flex-shrink: 0; /* Impedisce che la sidebar si restringa */
-    overflow-y: auto; /* Aggiunge scroll se il contenuto della sidebar è troppo lungo */
-    color: #333; /* Colore testo per la sidebar */
+    flex-shrink: 0;
+    overflow-y: auto;
+    color: #333;
 }
 
 .sidebar h3 {
-    margin-top: 0;
+    margin: 0 0 20px;
     color: #333;
     border-bottom: 1px solid #ccc;
     padding-bottom: 10px;
-    margin-bottom: 20px;
     font-size: 1.2em;
 }
 
@@ -54,71 +55,88 @@ body {
 }
 
 .sidebar ul li a:hover {
-    background-color: #cceeff; /* Sfondo al passaggio del mouse */
+    background-color: #cceeff;
     color: #0056b3;
 }
 
-.sidebar ul li a.active {
-    background-color: #007bff;
-    color: white;
+.sidebar ul li a.active,
+.sidebar-item-active {
     font-weight: bold;
+    color: #007bff;
+    background-color: #e6f2ff;
+    border-left: 3px solid #007bff;
+    padding-left: 7px !important;
 }
+
+/* === Contenuto Principale === */
 
 .content {
-    flex-grow: 1; /* Il contenuto prende tutto lo spazio rimanente */
+    flex-grow: 1;
     padding: 20px;
-    background-color: #fff; /* Sfondo bianco per il contenitore dei video */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombra per il contenitore dei video */
-    margin: 20px; /* Aggiungi un margine intorno al blocco del contenuto */
-    border-radius: 8px; /* Bordi arrotondati per il contenitore dei video */
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 20px;
+    border-radius: 8px;
 }
 
-.container { /* Rinomina questa classe o usala solo per la pagina index */
-
+.container {
     background-color: #fff;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     width: 100%;
-    max-width: 800px; /* Questo limiterà la larghezza del contenitore principale, non voluta per sidebar+grid */
+    max-width: 800px;
     margin: auto;
 }
 
-/* Se `.container` è il contenitore principale di tutto il layout (sidebar + content),
-   allora rinomina `body` in `.container` e imposta `body { margin: 0; padding: 0; }`
-   Oppure, introduci una nuova classe per il contenitore principale.
-   Ho introdotto `main-layout-container` sopra.
-*/
+/* === Tipografia === */
 
 h1 {
     color: #333;
     text-align: center;
-    margin-bottom: 25px;
-    margin-top: 0; /* Rimuovi margin-top: 30px per h1 nel content */
+    margin: 0 0 25px;
 }
+
 p {
     text-align: center;
     margin-bottom: 20px;
 }
+
 label {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
     color: #555;
 }
+
 input[type="text"], textarea {
     width: calc(100% - 20px);
     padding: 10px;
     margin-bottom: 20px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    box-sizing: border-box; /* Include padding in width */
+    box-sizing: border-box;
 }
+
 textarea {
-    resize: vertical; /* Allow vertical resizing */
+    resize: vertical;
     min-height: 100px;
 }
-button {
+
+.tag {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    margin: 0 5px 5px 0;
+}
+
+/* === Bottoni === */
+
+button,
+form button[type="submit"] {
     background-color: #007bff;
     color: white;
     padding: 12px 20px;
@@ -126,134 +144,170 @@ button {
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    width: 100%;
     transition: background-color 0.3s ease;
 }
-button:hover {
+
+button:hover, form button[type="submit"]:hover {
     background-color: #0056b3;
 }
+
+/* === Messaggi === */
+
 .message-list {
     margin-top: 40px;
     border-top: 1px solid #eee;
     padding-top: 20px;
 }
+
 .message-item {
     background-color: #e9ecef;
     padding: 15px;
     margin-bottom: 10px;
     border-radius: 5px;
 }
+
 .message-item strong {
     color: #0056b3;
 }
+
 .message-item small {
     display: block;
     color: #777;
     margin-top: 5px;
     font-size: 0.8em;
 }
+
+.error,
+.success {
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
 .error {
     color: red;
-    font-weight: bold;
-    margin-bottom: 15px;
-    text-align: center;
 }
+
 .success {
     color: green;
-    font-weight: bold;
-    margin-bottom: 15px;
-    text-align: center;
 }
-/* Regole per la griglia dei video (già buone, adattate leggermente) */
+
+/* Messaggi Django */
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.messages li {
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.messages .success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.messages .error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* === Video Grid === */
+
 .video-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Griglia responsiva */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
-    /* padding: 20px; Rimosso, il padding è gestito dal .content */
 }
+
 .video-item {
-    border: 1px solid #ddd; /* Cambiato da #ccc a #ddd per coerenza */
-    padding: 15px; /* Aumentato il padding per un aspetto migliore */
-    text-align: left; /* Allinea il testo a sinistra, non al centro */
-    background-color: #fff; /* Sfondo bianco per il singolo item */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Ombra più leggera */
-    border-radius: 8px; /* Bordi arrotondati */
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: left;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-radius: 8px;
 }
+
 .video-item h4 {
-    margin-top: 10px; /* Aggiungi un po' di margine superiore */
-    margin-bottom: 5px; /* Riduci il margine inferiore */
+    margin: 10px 0 5px;
 }
+
 .video-item p {
     font-size: 0.9em;
     color: #666;
-    text-align: left; /* Assicura che la descrizione sia allineata a sinistra */
     margin-bottom: 10px;
 }
+
 .video-item .tags {
     font-size: 0.8em;
     color: #888;
-    margin-top: 5px; /* Riduci il margine superiore */
-    text-align: left; /* Allinea i tag a sinistra */
+    margin-top: 5px;
 }
-.video-item iframe {
-    width: 100%;
-    /* Altezza fissa per i video embed può causare problemi di aspect ratio.
-       Meglio usare una tecnica responsive come per .video-embed */
-    /* height: 350px; */
-    border: none;
-    overflow: hidden;
-}
-/* Regole per rendere l'iframe responsive all'interno di .video-item */
+
 .video-embed {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%; /* 16:9 Aspect Ratio (9 / 16 * 100) */
+    padding-bottom: 56.25%;
     height: 0;
     overflow: hidden;
     margin-bottom: 10px;
 }
+
 .video-embed iframe {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
+    height: 100%;
+    border: none;
 }
+
+/* === Search Bar === */
+
 .search-bar {
-    margin-bottom: 20px;
     padding: 15px;
     background-color: #f9f9f9;
     border: 1px solid #eee;
     border-radius: 8px;
-    display: flex; /* Per allineare input e button */
-    gap: 10px; /* Spazio tra gli elementi */
-    align-items: center; /* Centra verticalmente */
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .search-bar form {
-    display: flex; /* Rende il form un container flex */
-    gap: 10px; /* Spazio tra gli elementi interni del form (input, button, link) */
-    align-items: center; /* Allinea verticalmente al centro gli elementi */
-    width: 100%; /* Assicura che il form occupi tutta la larghezza disponibile all'interno di .search-bar */
+    display: flex; /* Anche il form è un contenitore flessibile */
+    gap: 10px;
+    align-items: center;
+    width: 100%;
 }
 
 .search-bar input[type="text"] {
-    flex-grow: 1; /* L'input prende lo spazio disponibile */
+    flex: 1 1 0%;
+    min-width: 100px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-    margin-bottom: 0; /* Rimuovi il margin-bottom predefinito */
+    margin-bottom: 0;
 }
 
-.search-bar button {
+.search-bar button {    
+    flex: 0 0 auto;
     padding: 10px 15px;
-    background-color: #28a745; /* Un bel verde per il bottone di ricerca */
+    background-color: #28a745;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    width: auto; /* Sovrascrivi il width: 100% globale del button */
+    white-space: nowrap; /* Evita che il testo del bottone vada a capo */
 }
 
 .search-bar button:hover {
@@ -263,10 +317,129 @@ button:hover {
 .search-bar .clear-search {
     margin-left: 10px;
     text-decoration: none;
-    color: #dc3545; /* Colore rosso per pulire la ricerca */
+    color: #dc3545;
     font-size: 0.9em;
 }
 
 .search-bar .clear-search:hover {
+    text-decoration: underline;
+}
+
+/* === Tabelle === */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* === Azioni === */
+
+.actions a {
+    margin-right: 10px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.actions form {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.actions button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.actions button:hover {
+    background-color: #c82333;
+}
+
+/* === Form === */
+
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 20px 0;
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+form input[type="text"],
+form textarea {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+form button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+form button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.video-thumbnail {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.video-info {
+    padding-top: 5px;
+}
+
+.video-title {
+    font-size: 1.1em;
+    margin: 0 0 5px;
+}
+
+.video-title a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.video-title a:hover {
     text-decoration: underline;
 }

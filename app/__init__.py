@@ -11,6 +11,7 @@ db = SQLAlchemy()
 # 2. Definisci una funzione per creare e configurare la tua applicazione
 def create_app():
     app = Flask(__name__)
+    app.config['SECRET_KEY'] = '54kjtb5k6n54kn654lknfsòfxsa' 
     #basedir punta alla cartella 'app'
     basedir = os.path.abspath(os.path.dirname(__file__))
     # instance_path punta a 'my-microservice1/instance'
