@@ -7,42 +7,48 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    
-    <div class="container">
-        <p><a href="{{ url_for('main.video_page') }}">Vai alla pagina dei Video</a></p>
-        <h1>I Miei Messaggi</h1>
-    
-        <h1>Lascia un Messaggio</h1>
+    <div class="main-layout-container">
+        <div class="sidebar">
+            <h2>I Miei Messaggi</h2>
+            <ul>
+                <li class="sidebar-item-active"><a href="{{ url_for('main.index_page') }}">Home (Messaggi)</a></li>
+                <li><a href="{{ url_for('main.video_page') }}">Video YouTube</a></li>
+                <li><a href="{{ url_for('main.manage_categories') }}">Gestisci Categorie</a></li>
+            </ul>
+        </div>
+        <div class="content">
+            <h1>Lascia un Messaggio</h1>
 
-        {% if error %}
-        <p class="error">{{ error }}</p>
-        {% endif %}
-        {% if success %}
-        <p class="success">{{ success }}</p>
-        {% endif %}
-
-        <form action="/" method="POST">
-            <label for="name">Il tuo Nome:</label>
-            <input type="text" id="name" name="name" required>
-
-            <label for="message_content">Il tuo Messaggio:</label>
-            <textarea id="message_content" name="message_content" required></textarea>
-
-            <button type="submit">Invia Messaggio</button>
-        </form>
-
-        <div class="message-list">
-            <h2>Messaggi Ricevuti:</h2>
-            {% if messages %}
-                {% for msg in messages %}
-                    <div class="message-item">
-                        <strong>{{ msg.name }}</strong> <small>({{ msg.created_at.strftime('%Y-%m-%d %H:%M:%S') }})</small><br>
-                        {{ msg.message_content }}
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p>Ancora nessun messaggio. Sii il primo!</p>
+            {% if error %}
+            <p class="error">{{ error }}</p>
             {% endif %}
+            {% if success %}
+            <p class="success">{{ success }}</p>
+            {% endif %}
+
+            <form action="/" method="POST">
+                <label for="name">Il tuo Nome:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="message_content">Il tuo Messaggio:</label>
+                <textarea id="message_content" name="message_content" required></textarea>
+
+                <button type="submit">Invia Messaggio</button>
+            </form>
+
+            <div class="message-list">
+                <h2>Messaggi Ricevuti:</h2>
+                {% if messages %}
+                    {% for msg in messages %}
+                        <div class="message-item">
+                            <strong>{{ msg.name }}</strong> <small>({{ msg.created_at.strftime('%Y-%m-%d %H:%M:%S') }})</small><br>
+                            {{ msg.message_content }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Ancora nessun messaggio. Sii il primo!</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 </body>
