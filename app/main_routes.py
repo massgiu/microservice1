@@ -1,8 +1,9 @@
 # my-microservice1/app/main_routes.py
 
-from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash, session, current_app
 from datetime import datetime
 import re # Importa re per espressioni regolari per pulire i tag
+from functools import wraps # Importa wraps per i decorators
 
 # Importa l'istanza di db dal modulo principale (__init__.py)
 # Questo è il modo standard per accedere all'oggetto db da una Blueprint
@@ -15,6 +16,37 @@ from .youtube_service import get_latest_video, get_all_videos_from_channel, get_
 # Inizializza la Blueprint
 # 'main' è il nome della tua Blueprint. Sarà usato nei nomi degli endpoint (es. 'main.index')
 main = Blueprint('main', __name__) #Questa instanza sarà usata in __init__
+
+# Decoratore per proteggere le pagine
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('logged_in'): # Controlla se l'utente è loggato
+            return f(*args, **kwargs)
+        else:
+            flash('Devi effettuare il login per accedere a questa pagina.', 'error')
+            return redirect(url_for('main.admin_login'))
+    return decorated_function
+
+# Route per il login
+@main.route('/admin_login', methods=['GET', 'POST'], endpoint='admin_login')
+def admin_login():
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if password == current_app.config['ADMIN_PASSWORD']:
+            session['logged_in'] = True
+            flash('Login effettuato con successo!', 'success')
+            return redirect(url_for('main.manage_categories')) # Reindirizza a una pagina protetta dopo il login
+        else:
+            flash('Password errata.', 'error')
+    return render_template('admin_login.html')
+
+# Route per il logout
+@main.route('/admin_logout', methods=['GET'], endpoint='admin_logout')
+def admin_logout():
+    session.pop('logged_in', None)
+    flash('Logout effettuato.', 'info')
+    return redirect(url_for('main.index_page'))
 
 # Route per la pagina principale con il form e la lista dei messaggi
 @main.route('/', methods=['GET','POST'], endpoint='index_page')
@@ -118,6 +150,7 @@ def video_page(custom_category_id=None): # custom_category sarà None se non pre
 # GESTIONE DELLE CATEGORIE
 # Pagina principale di gestione delle categorie
 @main.route('/categories', methods=['GET'], endpoint='manage_categories')
+@login_required
 def manage_categories():
     """Mostra l'elenco di tutte le categorie personalizzate."""
     categories = db.session.execute(db.select(CustomCategory).order_by(CustomCategory.name)).scalars().all()
@@ -125,6 +158,7 @@ def manage_categories():
 
 #Aggiunta di una nuova categoria: controlla che il nome non sia vuoto e che non ci siano duplicat
 @main.route('/categories/add', methods=['GET', 'POST'], endpoint='add_category')
+@login_required
 def add_category():
     """Permette di aggiungere una nuova categoria personalizzata."""
     if request.method == 'POST':
@@ -156,6 +190,7 @@ def add_category():
 
 #form di modifica di una categoria esistente
 @main.route('/categories/edit/<int:category_id>', methods=['GET', 'POST'], endpoint='edit_category')
+@login_required
 def edit_category(category_id):
     """Permette di modificare una categoria esistente."""
     category = db.session.get(CustomCategory, category_id)
@@ -192,6 +227,7 @@ def edit_category(category_id):
 
 #Route per l'eliminazione di una categoria: è un metodo POST per maggiore sicurezza
 @main.route('/categories/delete/<int:category_id>', methods=['POST'], endpoint='delete_category')
+@login_required
 def delete_category(category_id):
     """Permette di eliminare una categoria."""
     category = db.session.get(CustomCategory, category_id)
@@ -214,6 +250,7 @@ def delete_category(category_id):
     return redirect(url_for('main.manage_categories'))
 
 @main.route('/manage_video_categories', methods=['GET', 'POST'], endpoint='manage_video_categories')
+@login_required
 def manage_video_categories():
     # 1. Recupera tutti i video dal canale YouTube (per visualizzazione)
     # Limita i risultati per non sovraccaricare la pagina se hai molti video.
@@ -390,20 +427,5 @@ def delete_message(message_id):
         db.session.rollback() # Annulla l'operazione in caso di errore
         return jsonify({'error': f'Error deleting message: {e}'}), 500
 
-# Endpoint di "health check"
-# Un endpoint di health check serve per verificare che il servizio sia attivo e funzionante.
-@main.route('/health', methods=['GET'])
-def health_check():
-    return jsonify({"status": "healthy", "message": "Microservizio attivo!"}), 200
-
-# Endpoint API semplice: /greet
-# Questo endpoint risponde a una richiesta GET e può opzionalmente prendere un nome.
-@main.route('/greet', methods=['GET'])
-def greet_user():
-    # Recuperiamo il parametro 'name' dalla query string (es. /greet?name=Alice)
-    name = request.args.get('name', 'Ospite') # 'Ospite' è il valore di default se 'name' non è fornito
-
-    # Restituiamo una risposta JSON
-    return jsonify({"message": f"Ciao, {name}!"}), 200
 
 

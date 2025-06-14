@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            /* Sovrascrivi il display:flex del body di style.css per centrare il login-container */
+            display: flex;
+            justify-content: center; /* Centra orizzontalmente */
+            align-items: center;     /* Centra verticalmente */
+            min-height: 100vh;       /* Assicura che occupi l'intera altezza della viewport */
+            background-color: #f4f7f6; /* Leggermente diverso dal tuo body principale se vuoi */
+            margin: 0;
+            /* font-family e padding li prende da style.css */
+        }
+        .login-container {
+            /* Simile al .container generico, ma più piccolo e specifico per il login */
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 380px; /* Larghezza massima più stretta per il modulo di login */
+        }
+        .login-container h1 {
+            margin-bottom: 25px;
+            font-size: 1.8em; /* Leggermente più piccolo del tuo h1 generale*/
+        }
+
+        /* Gli input type="password" ereditano da input[type="text"] ma aggiustiamo la larghezza */
+        .login-container input[type="password"] {
+            width: calc(100% - 22px); /* style.css ha width: calc(100% - 20px), qui 22px per 2px in più di border*/
+            padding: 12px; /* Un po' più di padding per renderlo più grande */
+            margin-bottom: 20px;
+            /* Border e border-radius li prende da style.css */
+            box-sizing: border-box; /* Cruciale per la larghezza calcolata */
+            font-size: 1em;
+        }
+
+        /* Il pulsante di submit eredita, ma lo facciamo occupare il 100% della larghezza */
+        .login-container button[type="submit"] {
+            width: 100%;
+            padding: 12px; /* Un po' più di padding per renderlo più grande */
+        }
+
+        .messages {
+            margin: 20px 0 0; /* Aggiustiamo il margine superiore per staccarli dal titolo */
+        }
+
+        .messages .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login Amministrazione</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Accedi</button>
+        </form>
+    </div>
+</body>
+</html>
