@@ -38,6 +38,10 @@
             margin-top: 10px;
             border-top: 1px solid #eee;
             padding-top: 10px;
+            /* --- SCROLL delle categorie--- */
+            max-height: 150px; /* <--- ALTEZZA MASSIMA DEL CONTENITORE */
+            overflow-y: auto;  /* <--- ABILITA LA SCROLLBAR VERTICALE SE IL CONTENUTO SUPERA max-height */
+            padding-right: 5px; /* <--- SPAZIO EXTRA PER NON FAR 'NASCONDERE' LA SCROLLBAR */
         }
         .category-checkbox-group label {
             display: block;
@@ -60,14 +64,13 @@
             bottom: 0;               /* Si attacca al fondo della viewport */
             width: 100%;             /* Occupa tutta la larghezza disponibile */
             background-color: #f9f9f9; /* Sfondo per nascondere il contenuto sottostante */
-            padding: 15px 0;         /* Spazio sopra e sotto il bottone */
+            padding: 10px 0;         /* Spazio sopra e sotto il bottone */
             box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Ombra sopra per staccarlo dal contenuto */
             text-align: center;      /* Centra il bottone */
             z-index: 1000;           /* Assicura che sia sopra gli altri contenuti */
             border-top: 1px solid #eee; /* Bordo superiore, se lo vuoi */
             /* Rimuovi o modifica queste sezioni se vuoi rimuovere lo spazio extra dalla fine del form */
             margin-top: 0;
-            padding-top: 0;
         }
         .save-button-container button {
             padding: 12px 30px;
