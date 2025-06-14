@@ -2,7 +2,7 @@
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import os
+from config import Config
 
 # 1. Inizializza db (senza collegarlo ancora all'app Flask)
 # Questo rende 'db' un oggetto disponibile a livello di package.
@@ -11,19 +11,8 @@ db = SQLAlchemy()
 # 2. Definisci una funzione per creare e configurare la tua applicazione
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = '54kjtb5k6n54kn654lknfsòfxsa' 
-    #basedir punta alla cartella 'app'
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    # instance_path punta a 'my-microservice1/instance'
-    # Si deve salire di un livello dalla cartella 'app'
-    instance_folder_path = os.path.join(basedir, '..', 'instance') # Saliamo di una cartella e crea il percorso
-
-    if not os.path.exists(instance_folder_path):
-        os.makedirs(instance_folder_path)
-
-    # Configurazione dell'applicazione
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_folder_path, 'site.db')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config.from_object(Config) # <-- Carica la configurazione da Config
+    
 
     # 3. Collega db all'app Flask, all'interno della funzione create_app
     db.init_app(app)
