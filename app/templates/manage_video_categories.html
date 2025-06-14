@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestisci Associazioni Video-Categorie</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Stili specifici per questa pagina */
+        .video-association-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        .video-association-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .video-association-item h3 {
+            margin-top: 0;
+            font-size: 1.1em;
+            color: #333;
+        }
+        .video-association-item .thumbnail {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .category-checkbox-group {
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .category-checkbox-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: normal; /* Override general label bold */
+            color: #555;
+            cursor: pointer;
+            display: flex; /* Per allineare checkbox e testo */
+            align-items: center;
+        }
+        .category-checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+            width: auto; /* Sovrascrive il width: 100% generico per gli input */
+            margin-bottom: 0; /* Sovrascrive il margin-bottom generico per gli input */
+        }
+        /* Stili per il contenitore del bottone Salva */
+        .save-button-container {
+            position: -webkit-sticky; /* Per Safari */
+            position: sticky;        /* Rende l'elemento "sticky" */
+            bottom: 0;               /* Si attacca al fondo della viewport */
+            width: 100%;             /* Occupa tutta la larghezza disponibile */
+            background-color: #f9f9f9; /* Sfondo per nascondere il contenuto sottostante */
+            padding: 15px 0;         /* Spazio sopra e sotto il bottone */
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Ombra sopra per staccarlo dal contenuto */
+            text-align: center;      /* Centra il bottone */
+            z-index: 1000;           /* Assicura che sia sopra gli altri contenuti */
+            border-top: 1px solid #eee; /* Bordo superiore, se lo vuoi */
+            /* Rimuovi o modifica queste sezioni se vuoi rimuovere lo spazio extra dalla fine del form */
+            margin-top: 0;
+            padding-top: 0;
+        }
+        .save-button-container button {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: auto; /* Importante per i bottoni in un contenitore flex o per evitarli al 100% */
+            display: inline-block; /* Assicura che il bottone non occupi tutta la larghezza del contenitore sticky */
+        }
+        .save-button-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-layout-container">
+        <div class="sidebar">
+            <h2>Navigazione</h2>
+            <ul>
+                <li><a href="{{ url_for('main.index_page') }}">Home (Messaggi)</a></li>
+                <li><a href="{{ url_for('main.video_page') }}">Video YouTube</a></li>
+                <li><a href="{{ url_for('main.manage_categories') }}">Gestisci Categorie</a></li>
+                <li class="sidebar-item-active"><a href="{{ url_for('main.manage_video_categories') }}">Associa Video a Categorie</a></li>
+            </ul>
+        </div>
+        <div class="content">
+            <h1>Associa Video di YouTube alle Categorie Personalizzate</h1>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="messages">
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+
+            {% if youtube_videos %}
+                <form method="POST">
+                    <div class="video-association-grid">
+                        {% for video in youtube_videos %}
+                            <div class="video-association-item">
+                                <img src="{{ video.thumbnail_url }}" alt="{{ video.title }}" class="thumbnail">
+                                <h3>{{ video.title }}</h3>
+                                <p style="font-size: 0.9em; color: #777;">{{ video.description[:100] }}...</p> {# Mostra una parte della descrizione #}
+                                
+                                <div class="category-checkbox-group">
+                                    <h4>Categorie:</h4>
+                                    {% if custom_categories %}
+                                        {% for cat in custom_categories %}
+                                            <label>
+                                                <input type="checkbox" 
+                                                       name="categories_for_{{ video.id }}" 
+                                                       value="{{ cat.id }}" 
+                                                       {% if video.id in video_associations and cat.id in video_associations[video.id] %}checked{% endif %}>
+                                                {{ cat.name }}
+                                            </label>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p>Nessuna categoria creata. <a href="{{ url_for('main.add_category') }}">Crea una categoria ora!</a></p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="save-button-container">
+                        <button type="submit">Salva Associazioni</button>
+                    </div>
+                </form>
+            {% else %}
+                <p>Nessun video trovato sul tuo canale YouTube. Verifica l'ID del canale o le credenziali API.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

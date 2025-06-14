@@ -213,6 +213,73 @@ def delete_category(category_id):
 
     return redirect(url_for('main.manage_categories'))
 
+@main.route('/manage_video_categories', methods=['GET', 'POST'], endpoint='manage_video_categories')
+def manage_video_categories():
+    # 1. Recupera tutti i video dal canale YouTube (per visualizzazione)
+    # Limita i risultati per non sovraccaricare la pagina se hai molti video.
+    # Potresti voler implementare la paginazione qui in futuro.
+    all_youtube_videos_data = get_all_videos_from_channel(max_results=50) # Recupera i dettagli dall'API
+
+    # 2. Recupera tutte le categorie personalizzate dal DB
+    custom_categories = db.session.execute(db.select(CustomCategory).order_by(CustomCategory.name)).scalars().all()
+
+    if request.method == 'POST':
+        try:
+            # Per ogni video che è stato visualizzato nella form:
+            for video_data in all_youtube_videos_data:
+                video_id = video_data['id']
+                
+                # Cerca il video nel tuo database locale (YouTubeVideo model)
+                # Se non esiste, crealo. È importante che esista per poter associare le categorie.
+                video_in_db = db.session.execute(db.select(YouTubeVideo).filter_by(id=video_id)).scalar_one_or_none()
+                if not video_in_db:
+                    video_in_db = YouTubeVideo(id=video_id)
+                    db.session.add(video_in_db)
+                    # Non fare commit qui, lo faremo alla fine del ciclo
+                
+                # Rimuovi tutte le associazioni esistenti per questo video prima di ri-aggiungerle
+                # Questo assicura che le checkbox deselezionate vengano gestite correttamente.
+                video_in_db.custom_categories.clear()
+
+                # Recupera le categorie selezionate per questo video_id dalla form (dopo le modifiche)
+                # Le checkbox inviano i loro valori come 'video_ID-category_ID'
+                selected_category_ids_for_video = request.form.getlist(f'categories_for_{video_id}')
+                # per ogni categoria flaggata
+                for cat_id_str in selected_category_ids_for_video:
+                    cat_id = int(cat_id_str)
+                    category = db.session.get(CustomCategory, cat_id)
+                    if category and category not in video_in_db.custom_categories:
+                        video_in_db.custom_categories.append(category)
+            
+            db.session.commit()
+            flash('Associazioni video-categorie aggiornate con successo!', 'success')
+            return redirect(url_for('main.manage_video_categories'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Errore durante l'aggiornamento delle associazioni: {e}", 'error')
+            # Rimane sulla stessa pagina per mostrare l'errore
+
+    # Quando la pagina viene caricata (GET) o dopo un POST fallito, prepariamo i dati:
+    
+    # Crea un dizionario per tenere traccia delle categorie associate a ogni video.
+    # Questo è necessario per pre-selezionare le checkbox nel template.
+    video_associations = {}
+    for video_data in all_youtube_videos_data:
+        video_id = video_data['id']
+        video_in_db = db.session.execute(db.select(YouTubeVideo).filter_by(id=video_id)).scalar_one_or_none()
+        if video_in_db:
+            # Crea un set degli ID delle categorie associate per un accesso rapido
+            video_associations[video_id] = {cat.id for cat in video_in_db.custom_categories}
+        else:
+            video_associations[video_id] = set() # Nessuna associazione se il video non è nel DB locale
+
+    return render_template('manage_video_categories.html', 
+                           youtube_videos=all_youtube_videos_data,
+                           custom_categories=custom_categories,
+                           video_associations=video_associations)
+
+
 # Ottieni tutti i messaggi
 @main.route('/api/messages', methods=['GET'])
 def get_all_messages():

@@ -35,7 +35,7 @@ class YouTubeVideo(db.Model):
         'CustomCategory',
         secondary='video_custom_category_association',
         back_populates='videos',
-        lazy='dynamic'  # opzionale, per coerenza con l'altro lato
+        lazy='select'  # opzionale, per coerenza con l'altro lato
     )
 
     def __repr__(self):
