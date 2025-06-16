@@ -1,33 +1,21 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% extends 'base.html' %}
+
+{% block title %}Aggiungi Categoria{% endblock %}
+
+{% block page_styles %} {# Qui inizia il blocco per gli stili specifici della pagina #}
     <style>
         form {
-            /* Stili già presenti, mantienili */
+            /* Stili già presenti*/
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            /* AGGIUNGI QUESTI PER IL FORM DI AGGIUNTA/MODIFICA */
             max-width: 500px;
             margin: 20px auto; /* Centra il form */
         }
     </style>
-</head>
-<body>
-    <div class="main-layout-container">
-        <div class="sidebar">
-            <h2>Navigazione</h2>
-            <ul>
-                <li><a href="{{ url_for('main.index_page') }}">Home (Messaggi)</a></li>
-                <li><a href="{{ url_for('main.video_page') }}">Video YouTube</a></li>
-                <li class="sidebar-item-active"><a href="{{ url_for('main.manage_categories') }}">Gestisci Categorie</a></li>
-            </ul>
-        </div>
+{% endblock %} {# Fine del blocco per gli stili specifici della pagina #}
+{% block content %} {# Qui inizia il contenuto HTML della pagina #}
         <div class="content">
             <h1>{{ title }}</h1>
 
@@ -59,6 +47,4 @@
 
             <a href="{{ url_for('main.manage_categories') }}" class="back-link">Torna alla gestione categorie</a>
         </div>
-    </div>
-</body>
-</html>
+{% endblock %}

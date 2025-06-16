@@ -1,54 +1,40 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lascia un Messaggio</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="main-layout-container">
-        <div class="sidebar">
-            <h2>I Miei Messaggi</h2>
-            <ul>
-                <li class="sidebar-item-active"><a href="{{ url_for('main.index_page') }}">Home (Messaggi)</a></li>
-                <li><a href="{{ url_for('main.video_page') }}">Video YouTube</a></li>   
-            </ul>
-        </div>
-        <div class="content">
-            <h1>Lascia un Messaggio</h1>
+{% extends 'base.html' %}
 
-            {% if error %}
-            <p class="error">{{ error }}</p>
+{% block title %}Tutor Massi homePage{% endblock %}
+
+{% block page_styles %}
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #0056b3; text-align: center; }
+        .video-section { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        .video-title { font-size: 1.8em; color: #333; margin-bottom: 10px; }
+        .video-description { font-size: 0.9em; color: #666; margin-bottom: 20px; }
+        .video-player { width: 100%; height: 450px; border: none; }
+        .no-video { text-align: center; color: #ff0000; font-weight: bold; }
+    </style>
+{% endblock %}
+
+{% block content %}
+        <h1>Home Page</h1>
+
+        <div class="video-section">
+            <h2>Ultimo Video dal Mio Canale YouTube</h2>
+            {% if latest_video %}
+                <h3 class="video-title">{{ latest_video.title }}</h3>
+                <a href="{{ latest_video.watch_url }}" target="_blank">{{ latest_video.title }}</a>
+                <iframe 
+                    class="video-player" 
+                    src="{{ latest_video.embed_url }}" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+                <p style="font-size: 0.8em; color: #999;">Pubblicato il: {{ latest_video.published_at.strftime('%Y-%m-%d') }}</p>
+                <p class="video-description">{{ latest_video.description }}</p>
+                <p>DEBUG EMBED URL: {{ latest_video.embed_url }}</p>
+            {% else %}
+                <p class="no-video">Nessun ultimo video trovato o errore nel recupero. Assicurati che il canale abbia video e che la configurazione API sia corretta.</p>
             {% endif %}
-            {% if success %}
-            <p class="success">{{ success }}</p>
-            {% endif %}
-
-            <form action="/" method="POST">
-                <label for="name">Il tuo Nome:</label>
-                <input type="text" id="name" name="name" required>
-
-                <label for="message_content">Il tuo Messaggio:</label>
-                <textarea id="message_content" name="message_content" required></textarea>
-
-                <button type="submit">Invia Messaggio</button>
-            </form>
-
-            <div class="message-list">
-                <h2>Messaggi Ricevuti:</h2>
-                {% if messages %}
-                    {% for msg in messages %}
-                        <div class="message-item">
-                            <strong>{{ msg.name }}</strong> <small>({{ msg.created_at.strftime('%Y-%m-%d %H:%M:%S') }})</small><br>
-                            {{ msg.message_content }}
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>Ancora nessun messaggio. Sii il primo!</p>
-                {% endif %}
-            </div>
         </div>
-    </div>
-</body>
-</html>
+{% endblock %}

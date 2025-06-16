@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Il Mio Microservizio{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block page_styles %}
+        {# Inserire stili CSS che saranno sovrascritti o estesi #}
+    {% endblock %}
+    </head>
+<body>
+    <div class="main-layout-container">
+        <div class="sidebar">
+            <h3>Menu</h3>
+            <ul>
+                <li><a href="{{ url_for('main.index_page') }}" class="{% if request.endpoint == 'main.index_page' %}sidebar-item-active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('main.video_page') }}" class="{% if request.endpoint == 'main.video_page' %}sidebar-item-active{% endif %}">Video</a></li>
+                <li><a href="{{ url_for('main.contatti_page') }}" class="{% if request.endpoint == 'main.contatti_page' %}sidebar-item-active{% endif %}">Contatti</a></li>
+                {% if session.get('logged_in') %}
+                    <li style="margin-top: 20px; font-weight: bold; color: #0056b3;">
+                        Admin Loggato
+                    </li>
+                    <li style="margin-top: 10px;">
+                        <a href="{{ url_for('main.manage_categories') }}" class="{% if request.endpoint == 'main.manage_categories' or request.endpoint == 'main.add_category' or request.endpoint == 'main.edit_category' %}sidebar-item-active{% endif %}">Gestisci Categorie</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('main.manage_video_categories') }}" class="{% if request.endpoint == 'main.manage_video_categories' %}sidebar-item-active{% endif %}">Associa Video/Categorie</a>
+                    </li>
+                    <li style="margin-top: 20px;">
+                        <a href="{{ url_for('main.admin_logout') }}">Logout</a>
+                    </li>
+                {% else %}
+                    <li style="margin-top: 20px;">
+                        <a href="{{ url_for('main.admin_login') }}" class="{% if request.endpoint == 'main.admin_login' %}sidebar-item-active{% endif %}">Login Amministratore</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</body>
+</html>

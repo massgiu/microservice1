@@ -1,23 +1,9 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestisci Categorie</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="main-layout-container">
-        <div class="sidebar">
-            <h2>Navigazione</h2>
-            <ul>
-                <li><a href="{{ url_for('main.index_page') }}">Home (Messaggi)</a></li>
-                <li><a href="{{ url_for('main.video_page') }}">Video YouTube</a></li>
-                <li class="sidebar-item-active"><a href="{{ url_for('main.manage_categories') }}">Gestisci Categorie</a></li>
-                {# Puoi aggiungere qui un link per "Gestisci Associazioni Video" in futuro #}
-            </ul>
-        </div>
-        <div class="content">
+{% extends 'base.html' %}
+
+{% block title %}Gestisci Categorie{% endblock %}
+
+{% block content %}
+
             <h1>Gestisci Categorie Personalizzate</h1>
 
             {# Visualizzazione dei messaggi flash #}
@@ -62,7 +48,4 @@
             {% else %}
                 <p>Nessuna categoria personalizzata trovata. <a href="{{ url_for('main.add_category') }}">Aggiungine una ora!</a></p>
             {% endif %}
-        </div>
-    </div>
-</body>
-</html>
+{% endblock %}

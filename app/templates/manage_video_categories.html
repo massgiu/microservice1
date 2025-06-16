@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestisci Associazioni Video-Categorie</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% extends 'base.html' %}
+
+{% block title %}Gestisci Associazioni Video-Categoria{% endblock %}
+
+{% block page_styles %} {# Qui inizia il blocco per gli stili specifici della pagina #}
     <style>
         /* Stili specifici per questa pagina */
         .video-association-grid {
@@ -88,18 +86,9 @@
             background-color: #0056b3;
         }
     </style>
-</head>
-<body>
-    <div class="main-layout-container">
-        <div class="sidebar">
-            <h2>Navigazione</h2>
-            <ul>
-                <li><a href="{{ url_for('main.index_page') }}">Home (Messaggi)</a></li>
-                <li><a href="{{ url_for('main.video_page') }}">Video YouTube</a></li>
-                <li><a href="{{ url_for('main.manage_categories') }}">Gestisci Categorie</a></li>
-                <li class="sidebar-item-active"><a href="{{ url_for('main.manage_video_categories') }}">Associa Video a Categorie</a></li>
-            </ul>
-        </div>
+{% endblock %} {# Fine del blocco per gli stili specifici della pagina #}
+{% block content %}
+
         <div class="content">
             <h1>Associa Video di YouTube alle Categorie Personalizzate</h1>
 
@@ -149,7 +138,4 @@
             {% else %}
                 <p>Nessun video trovato sul tuo canale YouTube. Verifica l'ID del canale o le credenziali API.</p>
             {% endif %}
-        </div>
-    </div>
-</body>
-</html>
+{% endblock %}

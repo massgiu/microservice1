@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Contatti - Invia un Messaggio{% endblock %}
+
+{% block page_styles %}
+    <style>
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container"> {# Usa la classe .container del tuo style.css #}
+        <h1>Contattaci</h1>
+        <p>Hai domande, suggerimenti o feedback? Inviami un messaggio!</p>
+
+        {# Visualizza i messaggi flash di Flask #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <label for="name">Il tuo Nome:</label>
+            <input type="text" id="name" name="name" value="{{ name if name is defined }}" required>
+
+            <label for="email">La tua Email:</label>
+            <input type="email" id="email" name="email" value="{{ email if email is defined }}" required>
+
+            <label for="message_content">Il tuo Messaggio:</label>
+            <textarea id="message_content" name="message_content" required>{{ message_content if message_content is defined }}</textarea>
+
+            {# reCAPTCHA widget - IMPORTANTE: assicurati che il tuo RECAPTCHA_SITE_KEY sia configurato! #}
+            {{ recaptcha }}
+
+            <button type="submit">Invia Messaggio</button>
+        </form>
+    </div>
+
+    {# Non mostriamo più la lista dei messaggi inviati qui, perché ora vanno via email #}
+    {# Se vuoi una sezione "Messaggi Ricevuti" sul sito, dovrà essere una pagina a parte, magari accessibile solo all'admin #}
+{% endblock %}
