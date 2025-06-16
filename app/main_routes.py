@@ -3,11 +3,12 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash, session, current_app
 from datetime import datetime
 import re # Importa re per espressioni regolari per pulire i tag
-from functools import wraps # Importa wraps per i decorators
+from functools import wraps # Importa wraps per i decorators dei login required
+from flask_mail import Message as MailMessage # <--- Importa Message da Flask-Mail
 
 # Importa l'istanza di db dal modulo principale (__init__.py)
 # Questo è il modo standard per accedere all'oggetto db da una Blueprint
-from . import db
+from . import db, mail
 from .models import Message, Video, CustomCategory, YouTubeVideo 
 
 # Importa le funzioni per interagire con l'API di YouTube
@@ -48,9 +49,55 @@ def admin_logout():
     flash('Logout effettuato.', 'info')
     return redirect(url_for('main.index_page'))
 
-# Route per la pagina principale con il form e la lista dei messaggi
-@main.route('/', methods=['GET','POST'], endpoint='index_page')
+# Route per index
+@main.route('/', methods=['GET'], endpoint='index_page')
 def home():
+    last_video_from_youtube = get_latest_video()
+    return render_template('index.html', latest_video=last_video_from_youtube)
+
+# NUOVA ROUTE: Pagina Contatti (ex Home Page con Form Messaggi)
+@main.route('/contatti', methods=['GET', 'POST'], endpoint='contatti_page')
+def contatti_page():
+    # Per la GET request, mostra semplicemente il form
+    if request.method == 'GET':
+        return render_template('contact.html')
+
+    # Per la POST request, elabora il form
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email') # Aggiungiamo un campo email per l'utente
+        message_content = request.form.get('message_content')
+
+        # Validazione del reCAPTCHA
+        """ if not current_app.config['RECAPTCHA_SITE_KEY'] or not current_app.config['RECAPTCHA_SECRET_KEY']:
+            flash("Attenzione: Chiavi reCAPTCHA non configurate. Il form non è protetto.", 'warning')
+        elif not recaptcha.verify():
+            flash('La verifica reCAPTCHA non è riuscita. Riprova.', 'error')
+            return render_template('contact.html', name=name, email=email, message_content=message_content) """
+
+        if not name or not email or not message_content:
+            flash('Tutti i campi sono obbligatori.', 'error')
+            return render_template('contact.html', name=name, email=email, message_content=message_content)
+
+        # Invia l'email
+        try:
+            # Crea un oggetto MailMessage
+            msg = MailMessage(
+                subject=f"Nuovo messaggio dal tuo sito da {name}",
+                recipients=[current_app.config['MAIL_DEFAULT_SENDER']], # Invia a te stesso
+                body=f"Nome: {name}\nEmail: {email}\nMessaggio:\n{message_content}"
+            )
+            mail.send(msg)
+            flash('Messaggio inviato con successo!', 'success')
+            return redirect(url_for('main.contatti_page')) # Reindirizza per evitare re-invio form
+        except Exception as e:
+            flash(f'Si è verificato un errore durante l\'invio del messaggio: {e}', 'error')
+            current_app.logger.error(f"Errore nell'invio email: {e}", exc_info=True) # Logga l'errore completo
+            return render_template('contact.html', name=name, email=email, message_content=message_content)
+
+# Route per la pagina principale con il form e la lista dei messaggi
+@main.route('/old_index', methods=['GET','POST'], endpoint='old_index_page')
+def old_home():
     error = None
     success = None
     #called by index.html after submit pressed
@@ -80,7 +127,7 @@ def home():
     # recuperiamo tutti i messaggi dal database e li memorizzamo nella lista all_messages
     all_messages = db.session.execute(db.select(Message).order_by(Message.created_at.desc())).scalars().all()
     # Passiamo i messaggi al template
-    return render_template('index.html', messages=all_messages, error=error, success=success)
+    return render_template('old_index.html', messages=all_messages, error=error, success=success)
 
     """ @app_instance.route('/video', methods=['GET'], endpoint='video_page')
     def video_page():
