@@ -1,37 +1,14 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video YouTube</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="main-layout-container">
-        <div class="sidebar">
-            <h2>Le Tue Categorie</h2>
-            <ul>
-                <li>
-                    <a href="{{ url_for('main.video_page') }}" 
-                       class="{% if not current_filter_category_id %}sidebar-item-active{% endif %}">
-                       Tutti i Video
-                    </a>
-                </li>
-                {% if custom_categories %}
-                    {% for category in custom_categories %}
-                        <li>
-                            {# L'URL ora usa 'custom_category_id' e l'ID della categoria dal tuo DB #}
-                            <a href="{{ url_for('main.video_page', custom_category_id=category.id) }}"
-                               class="{% if current_filter_category_id == category.id %}sidebar-item-active{% endif %}">
-                               {{ category.name }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                {% else %}
-                    <li>Nessuna categoria personalizzata disponibile.</li>
-                {% endif %}
-            </ul>
-        </div>
+{% extends 'base.html' %} {# Estende il template base #}
+
+{% block title %}Video pubblicati{% endblock %}
+
+{% block page_styles %} {# Qui inizia il blocco per gli stili specifici della pagina #}
+<style>
+</style>
+{% endblock %}
+
+{% block content %} {# Qui inizia il div content#}
+
         <div class="content">
             <h1>Video YouTube</h1>
             <div class="search-bar">
@@ -49,17 +26,12 @@
                             
                             <div class="video-info">
                                 <h3 class="video-title">
-                                    <a href="{{ video.embed_url }}" target="_blank">{{ video.title }}</a>
+                                    <a href="{{ video.watch_url }}" target="_blank">{{ video.title }}</a>
                                 </h3>
                                 <p class="video-description">{{ video.description }}</p>
                                 {% if video.published_at %}
                                     <p style="font-size: 0.8em; color: #999;">Pubblicato il: {{ video.published_at.strftime('%Y-%m-%d') }}</p>
                                 {% endif %}
-                                {# Qui puoi aggiungere le categorie personalizzate del video, se disponibili #}
-                                {# Per fare questo, dovresti arricchire i dati 'video' passati dal Flask con le categorie del tuo DB #}
-                                {# Questo richiede una query aggiuntiva per OGNI video nella main_routes.py, o una join più complessa. #}
-                                {# Per ora, lasceremo il menu laterale come filtro principale. #}
-                                {# Se vuoi visualizzare le categorie sul video, lo faremo in un prossimo passaggio #}
                                 {#
                                 {% set video_in_db = get_video_from_db_context(video.id) %}
                                 {% if video_in_db and video_in_db.custom_categories %}
@@ -78,7 +50,4 @@
             {% else %}
                 <p>Nessun video trovato. Verifica la configurazione, l'ID del canale o le associazioni delle categorie.</p>
             {% endif %}
-        </div>
-    </div>
-</body>
-</html>
+{% endblock %}
